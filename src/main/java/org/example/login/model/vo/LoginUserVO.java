@@ -19,6 +19,11 @@ public class LoginUserVO implements Serializable {
     private Long id;
 
     /**
+     * 用户账号
+     */
+    private String userAccount;
+
+    /**
      * 用户昵称
      */
     private String userName;
@@ -29,17 +34,21 @@ public class LoginUserVO implements Serializable {
     private Date createTime;
 
     /**
+     * jwtToken
+     */
+    private String token;
+
+
+    /**
      *  转换函数
-     *
      * @param user User
      * @return LoginUserVO
      */
-    public static LoginUserVO toLoginUserVO(User user) {
-        if (user == null) {
-            return null;
-        }
+    public static LoginUserVO toLoginUserVO(User user, String token) {
+        if (user == null) { return null; }
         LoginUserVO loginUserVO = new LoginUserVO();
         BeanUtils.copyProperties(user, loginUserVO);
+        loginUserVO.setToken(token);
         return loginUserVO;
     }
 

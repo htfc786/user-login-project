@@ -1,25 +1,20 @@
 <template></template>
 
 <script setup lang="ts">
-import API from "@/api";
-import { onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { message } from 'ant-design-vue';
+import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { TOKEN_KEY } from "@/request";
 
-const router = useRouter();
-
-const logout = async () => {
-  const hide = message.loading("正在退出登录...", 0);
-  await API.userController.userLogout()
-  hide();
-  router.push({
-    path: "/",
-    replace: true,
-  });
-}
-
-onMounted(logout);
-
+onMounted(() => {
+  if (localStorage.getItem(TOKEN_KEY)) {
+    localStorage.removeItem(TOKEN_KEY);
+    window.location.reload();
+  } else {
+    // 跳转到首页
+    const route = useRouter();
+    route.push({ path: '/' });
+  }
+});
 </script>
 
 <style scoped></style>

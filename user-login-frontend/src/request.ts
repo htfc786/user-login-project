@@ -6,6 +6,8 @@ import { message } from 'ant-design-vue';
 import router from "./router";
 import { getRoute } from "./router";
 
+export const TOKEN_KEY = "token";
+
 const myAxios = axios.create({
   baseURL: "/api",
   timeout: 60000,
@@ -16,6 +18,12 @@ const myAxios = axios.create({
 myAxios.interceptors.request.use(
   function (config) {
     // Do something before request is sent
+    
+    // 自动添加token
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
     return config;
   },
   function (error) {
@@ -48,6 +56,12 @@ myAxios.interceptors.response.use(
           query: { redirect: path || "/" },
         });
       }
+    }
+    // 自动保存token
+    if (data.code === 200 && response.request.responseURL.includes("auth/login") &&
+       data.data?.token) {
+      const token = data.data.token;
+      localStorage.setItem(TOKEN_KEY, token);
     }
 
     return response;

@@ -14,7 +14,7 @@ const info = ref('')
 
 onMounted(() => {
   API.userController.test2().then(res => {
-    info.value = res.data.data
+    info.value = res.data.data || '';
   })
 })
 

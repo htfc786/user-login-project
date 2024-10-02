@@ -1,6 +1,5 @@
 import { RouteRecordRaw } from "vue-router";
-import IndexPage from "../pages/IndexPage.vue";
-
+import IndexPage from "@/pages/IndexPage.vue";
 /**
  * 路由列表
  */
@@ -12,17 +11,17 @@ export default [
   },
   {
     path: "/about",
-    component: () => import("../pages/AboutPage.vue"),
+    component: () => import("@/pages/AboutPage.vue"),
     props: true,
   },
   {
     path: "/home",
-    component: () => import("../pages/HomePage.vue"),
+    component: () => import("@/pages/HomePage.vue"),
     props: true,
   },
   {
     path: "/auth/login",
-    component: () => import("../pages/UserLoginPage.vue"),
+    component: () => import("@/pages/UserLoginPage.vue"),
     props: true,
   },
   {
@@ -32,7 +31,7 @@ export default [
   },
   {
     path: "/auth/logout",
-    component: () => import("../pages/UserLogoutPage.vue"),
+    component: () => import("@/pages/UserLogoutPage.vue"),
     props: true,
   },
   // 404页面

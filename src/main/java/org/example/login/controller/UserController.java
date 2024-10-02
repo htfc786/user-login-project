@@ -54,14 +54,6 @@ public class UserController {
         return ResponseUtils.success(loginUserVO);
     }
 
-    @PostMapping("/auth/logout")
-    public BaseResponse<Boolean> userLogout(HttpServletRequest request) {
-        if (request == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        boolean result = userService.userLogout(request);
-        return ResponseUtils.success(result);
-    }
 
     @GetMapping("/test1")
     public BaseResponse<String> test1() {
@@ -71,7 +63,8 @@ public class UserController {
     @GetMapping("/test2")
     @AuthCheck
     public BaseResponse<String> test2(HttpServletRequest request) {
-        User user = userService.getLoginUser(request);
+        Long userId = userService.getLoginUserId(request);
+        User user = userService.getById(userId);
         return ResponseUtils.success("受保护的接口，登录用户："+user.getUserAccount());
     }
 

@@ -9,7 +9,7 @@ import org.example.login.model.entity.User;
 import org.example.login.model.vo.LoginUserVO;
 import org.example.login.service.UserService;
 import org.example.login.mapper.UserMapper;
-import org.springframework.beans.BeanUtils;
+import org.example.login.utils.JWTUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -91,31 +91,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (user == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户名或密码错误！");
         }
-        // 4. 记录用户登录状态
-        request.getSession().setAttribute(USER_LOGIN_STATE, user);
-        return LoginUserVO.toLoginUserVO(user);
+        // 4. 生成token
+        String token = JWTUtils.genToken(user);
+        return LoginUserVO.toLoginUserVO(user, token);
     }
 
     @Override
-    public boolean userLogout(HttpServletRequest request) {
-        if (request.getSession().getAttribute(USER_LOGIN_STATE) == null) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "未登录");
-        }
-        // 移除登录态
-        request.getSession().removeAttribute(USER_LOGIN_STATE);
-        return true;
-    }
+    public Long getLoginUserId(HttpServletRequest request) {
+        // 先获取token
+        String token = JWTUtils.getToken(request);
+        if (token == null) return null;
+        // userid
+        Long userId = JWTUtils.getUserId(token);
+        if (userId == null) return null;
+        return userId;
 
-    @Override
-    public User getLoginUser(HttpServletRequest request) {
-        // 先判断是否已登录
-        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
-        User currentUser = (User) userObj;
-        if (currentUser == null || currentUser.getId() == null) {
-            return null;
-        }
-        // 从数据库查询（追求性能的话可以注释，直接走缓存）
-        long userId = currentUser.getId();
-        return this.getById(userId);
     }
 }
