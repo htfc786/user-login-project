@@ -17,20 +17,35 @@ export async function userLogin(
   });
 }
 
-/** userLogout POST /auth/logout */
-export async function userLogout(options?: { [key: string]: any }) {
-  return request<API.BaseResponseBoolean_>("/auth/logout", {
-    method: "POST",
-    ...(options || {}),
-  });
-}
-
 /** userRegister POST /auth/register */
 export async function userRegister(
   body: API.UserRegisterRequest,
   options?: { [key: string]: any }
 ) {
   return request<API.BaseResponseLong_>("/auth/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** wxLoginInfo GET /auth/wx/info */
+export async function wxLoginInfo(options?: { [key: string]: any }) {
+  return request<API.BaseResponseWxLoginInfoVO_>("/auth/wx/info", {
+    method: "GET",
+    ...(options || {}),
+  });
+}
+
+/** wxLogin POST /auth/wx/login */
+export async function wxLogin(
+  body: API.WxLoginRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseLoginUserVO_>("/auth/wx/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

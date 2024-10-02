@@ -58,8 +58,9 @@ myAxios.interceptors.response.use(
       }
     }
     // 自动保存token
-    if (data.code === 200 && response.request.responseURL.includes("auth/login") &&
-       data.data?.token) {
+    if (data.code === 200 && data.data?.token &&
+        (response.request.responseURL.includes("auth/login") ||
+        response.request.responseURL.includes("auth/wx/login"))) {
       const token = data.data.token;
       localStorage.setItem(TOKEN_KEY, token);
     }

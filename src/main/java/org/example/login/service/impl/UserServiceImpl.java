@@ -5,24 +5,25 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.example.login.common.ErrorCode;
 import org.example.login.exception.BusinessException;
+import org.example.login.model.dto.user.WxLoginUserInfo;
 import org.example.login.model.entity.User;
-import org.example.login.model.vo.LoginUserVO;
+import org.example.login.model.vo.user.LoginUserVO;
 import org.example.login.service.UserService;
 import org.example.login.mapper.UserMapper;
 import org.example.login.utils.JWTUtils;
+import org.example.login.utils.WxUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static org.example.login.constant.UserConstant.USER_LOGIN_STATE;
-
 /**
-* @author htfc786
-* @description 针对表【user(用户)】的数据库操作Service实现
-* @createDate 2024-09-28 10:26:27
-*/
+ * @author htfc786
+ * @description 针对表【user(用户)】的数据库操作Service实现
+ * @createDate 2024-09-28 10:26:27
+ */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
@@ -31,6 +32,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Value("${app.salt}")
     private String SALT;
+
+    @Autowired
+    private WxUtils wxUtils;
 
     @Override
     public long userRegister(String userAccount, String userPassword, String checkPassword) {
@@ -94,6 +98,35 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 4. 生成token
         String token = JWTUtils.genToken(user);
         return LoginUserVO.toLoginUserVO(user, token);
+    }
+
+    @Override
+    public LoginUserVO wxLogin(String code, String state, HttpServletRequest request) {
+        // 1. 从微信服务器获取用户信息
+        WxLoginUserInfo userInfo = wxUtils.getUserInfo(code);
+        String wxOpenId = userInfo.getOpenid();
+        // 单机锁
+        synchronized (wxOpenId.intern()) {
+            // 2.查询用户是否已存在
+            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("wxOpenId", wxOpenId);
+            User user = this.getOne(queryWrapper);
+            // 用户不存在则自动注册
+            if (user == null) {
+                user = new User();
+                user.setWxOpenId(wxOpenId);
+                user.setUserAvatar(userInfo.getHeadimgurl());
+                user.setUserName(userInfo.getNickname());
+                user.setUserAccount(user.getUserName());
+                boolean result = this.save(user);
+                if (!result) {
+                    throw new BusinessException(ErrorCode.SYSTEM_ERROR, "登录失败");
+                }
+            }
+            // 3. 生成token
+            String token = JWTUtils.genToken(user);
+            return LoginUserVO.toLoginUserVO(user, token);
+        }
     }
 
     @Override

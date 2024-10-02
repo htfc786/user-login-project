@@ -34,6 +34,11 @@ export default [
     component: () => import("@/pages/UserLogoutPage.vue"),
     props: true,
   },
+  {
+    path: "/auth/wx/login",
+    component: () => import("@/pages/WxLoginPage.vue"),
+    props: true,
+  },
   // 404页面
   {
     path: "/404",

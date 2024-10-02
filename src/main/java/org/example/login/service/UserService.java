@@ -2,7 +2,7 @@ package org.example.login.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.example.login.model.entity.User;
-import org.example.login.model.vo.LoginUserVO;
+import org.example.login.model.vo.user.LoginUserVO;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,6 +32,16 @@ public interface UserService extends IService<User> {
      * @return 用户登录信息
      */
     LoginUserVO userLogin(String userAccount, String userPassword, HttpServletRequest request);
+
+    /**
+     * 微信登录
+     *
+     * @param code    用户账户
+     * @param state   用户密码
+     * @param request 请求原始数据
+     * @return 用户登录信息
+     */
+    LoginUserVO wxLogin(String code, String state, HttpServletRequest request);
 
     /**
      * 获取当前登录用户

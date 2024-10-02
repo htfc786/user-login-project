@@ -1,4 +1,4 @@
-package org.example.login.model.vo;
+package org.example.login.model.vo.user;
 
 import lombok.Data;
 import org.example.login.model.entity.User;

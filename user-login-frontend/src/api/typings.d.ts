@@ -1,10 +1,4 @@
 declare namespace API {
-  type BaseResponseBoolean_ = {
-    code?: number;
-    data?: boolean;
-    message?: string;
-  };
-
   type BaseResponseLoginUserVO_ = {
     code?: number;
     data?: LoginUserVO;
@@ -23,9 +17,17 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseWxLoginInfoVO_ = {
+    code?: number;
+    data?: WxLoginInfoVO;
+    message?: string;
+  };
+
   type LoginUserVO = {
     createTime?: string;
     id?: number;
+    token?: string;
+    userAccount?: string;
     userName?: string;
   };
 
@@ -38,5 +40,14 @@ declare namespace API {
     checkPassword?: string;
     userAccount?: string;
     userPassword?: string;
+  };
+
+  type WxLoginInfoVO = {
+    wxAppId?: string;
+  };
+
+  type WxLoginRequest = {
+    code?: string;
+    state?: string;
   };
 }

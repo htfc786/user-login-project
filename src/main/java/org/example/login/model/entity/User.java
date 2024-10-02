@@ -41,6 +41,18 @@ public class User implements Serializable {
     private String userName;
 
     /**
+     * 用户头像
+     */
+    @TableField("userAvatar")
+    private String userAvatar;
+
+    /**
+     * 微信openId
+     */
+    @TableField("wxOpenId")
+    private String wxOpenId;
+
+    /**
      * 创建时间
      */
     @TableField("createTime")

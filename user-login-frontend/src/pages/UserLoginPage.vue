@@ -23,7 +23,13 @@
       </a-form-item>
       <a-form-item>
         <div style="display: flex; width: 100%; align-items: center; justify-content: space-around;">
-          <a-button type="primary" html-type="submit" style="width: 120px">登录</a-button>
+          <a-button type="primary" html-type="submit" style="width: 200px">登录</a-button>
+        </div>
+      </a-form-item>
+      
+      <a-form-item>
+        <div style="display: flex; width: 100%; align-items: center; justify-content: space-between;">
+          <div>其他登录方式：<a-button @click="wxLogin">微信登录</a-button></div>
           <p>没有账号？<router-link to="/auth/register">点击注册</router-link></p>
         </div>
       </a-form-item>
@@ -61,11 +67,23 @@ const handleSubmit = async () => {
   if (res.data.code === 200) {
     message.success("登录成功");
     router.push({
-      path: decodeURIComponent(route.query.redirect as string) || "/",
+      path: decodeURIComponent(route.query.redirect as string || "") || "/",
       replace: true,
     });
   } else {
     message.error("登录失败，" + res.data.message);
   }
+};
+
+/**
+ * 微信登录
+ */
+const wxLogin = () => {
+  router.push({
+    path: "/auth/wx/login",
+    query: {
+      redirect: encodeURIComponent(route.query.redirect as string),
+    },
+  })
 };
 </script>
